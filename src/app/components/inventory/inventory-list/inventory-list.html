@@ -1,14 +1,14 @@
 <section class="inventory-list-container">
 
-  @if (store.isLoading()) {
+  @if (isLoading()) {
     <div class="loading">
       <mat-spinner diameter="40" />
     </div>
   } @else {
-    @if (store.items().length === 0) {
+    @if (items().length === 0) {
       <p>No items available.</p>
     } @else {
-      <table mat-table [dataSource]="store.items()" class="inventory-table" matSort>
+      <table mat-table [dataSource]="items()" class="inventory-table" matSort>
 
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef> Name </th>

@@ -30,23 +30,25 @@ import { ItemForm } from '../item-form/item-form';
   templateUrl: './inventory-list.html',
   styleUrl: './inventory-list.scss'
 })
-export class InventoryListComponent {
-  readonly store = inject(InventoryStore);
-
+export class InventoryList {
+  #store = inject(InventoryStore);
   #dialog = inject(MatDialog);
+
+  readonly items = this.#store.items;
+  readonly isLoading = this.#store.isLoading;
 
   displayedColumns = ['name', 'category', 'status', 'actions'];
 
   checkout(id: number) {
-    this.store.checkoutItem(id);
+    this.#store.checkoutItem(id);
   }
 
   checkin(id: number) {
-    this.store.checkinItem(id);
+    this.#store.checkinItem(id);
   }
 
   remove(id: number) {
-    this.store.deleteItem(id);
+    this.#store.deleteItem(id);
   }
 
   openEditDialog(item: Item): void {
