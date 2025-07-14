@@ -1,16 +1,39 @@
- .add-form {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        align-items: flex-end;
-        flex-wrap: wrap;
-      }
+.add-form {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-      .full-width {
-        flex: 1 1 300px;
-        min-width: 250px;
-      }
+.form-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #3f51b5;
+}
 
-      button[type='submit'] {
-        height: 56px;
-      }
+.form-field {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.submit-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.button-icon {
+  font-size: 20px;
+}

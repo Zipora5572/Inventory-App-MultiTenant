@@ -9,7 +9,7 @@ import { InventoryStore } from '../../../store/inventory.store';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { Item } from '../../../models/item';
-import { Toast } from '../../../services/toast';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ItemForm } from '../item-form/item-form';
 
 @Component({
@@ -24,7 +24,8 @@ import { ItemForm } from '../item-form/item-form';
     MatProgressSpinnerModule,
     MatTableModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTooltipModule
   ],
   templateUrl: './inventory-list.html',
   styleUrl: './inventory-list.scss'

@@ -99,18 +99,23 @@ export const InventoryStore = signalStore(
       });
     };
 
-    const checkoutItem = (id: number): void => {
-      inventoryService.checkout(id).subscribe({
-        next: () => {
-          loadItems();
-          toast.show('Item checked out', 'success');
-        },
-        error: err => {
-          console.error('[InventoryStore] Checkout failed:', err);
-          toast.show('Failed to check out item', 'error');
-        },
-      });
-    };
+  const checkoutItem = (id: number): void => {
+  inventoryService.checkout(id).subscribe({
+    next: () => {
+      loadItems();
+      toast.show('Item checked out', 'success');
+    },
+    error: err => {
+      console.error('[InventoryStore] Checkout failed:', err);
+      if (err.status === 403) {
+        toast.show('Access denied: you are not authorized to check out this item.', 'error');
+      } else {
+        toast.show('Failed to check out item', 'error');
+      }
+    },
+  });
+};
+
 
     const checkinItem = (id: number): void => {
       inventoryService.checkin(id).subscribe({

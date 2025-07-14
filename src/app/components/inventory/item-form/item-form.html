@@ -1,5 +1,9 @@
 <form [formGroup]="form" (ngSubmit)="submit()" class="add-form" autocomplete="off">
-  <mat-form-field appearance="fill" class="full-width">
+  <h2 class="form-title">
+    {{ isEditMode ? 'Edit Item' : 'Add New Item' }}
+  </h2>
+
+  <mat-form-field appearance="outline" class="form-field">
     <mat-label>Item Name</mat-label>
     <input matInput formControlName="name" placeholder="Enter item name" />
 
@@ -7,11 +11,11 @@
       <mat-error>Name is required</mat-error>
     }
     @if ((form.controls.name.touched || submitted) && form.controls.name.hasError('maxlength')) {
-      <mat-error>Name must be at most 50 characters</mat-error>
+      <mat-error>Max 50 characters</mat-error>
     }
   </mat-form-field>
 
-  <mat-form-field appearance="fill" class="full-width">
+  <mat-form-field appearance="outline" class="form-field">
     <mat-label>Category</mat-label>
     <input matInput formControlName="category" placeholder="Enter category" />
 
@@ -20,7 +24,16 @@
     }
   </mat-form-field>
 
-  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting">
-    {{ isEditMode ? 'Update Item' : 'Add Item' }}
-  </button>
+  <div class="form-actions">
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="form.invalid || isSubmitting"
+      class="submit-button"
+    >
+      <mat-icon class="button-icon">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+      {{ isEditMode ? 'Update Item' : 'Add Item' }}
+    </button>
+  </div>
 </form>
