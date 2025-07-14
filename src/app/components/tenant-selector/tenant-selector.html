@@ -1,0 +1,13 @@
+
+<mat-select
+  [value]="selectedTenant()"
+  (selectionChange)="onChange($event.value)"
+  placeholder="Select Tenant"
+  disableRipple
+>
+  @for (tenant of tenants(); track tenant.id) {
+    <mat-option [value]="tenant.name">
+      {{ tenant.name }}
+    </mat-option>
+  }
+</mat-select>

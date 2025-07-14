@@ -1,0 +1,24 @@
+<mat-toolbar class="header-toolbar">
+  <div class="logo">
+    <span class="app-name">Multi-Tenant Inventory</span>
+  </div>
+  
+  <nav class="nav-links">
+    <button mat-button routerLink="/inventory" routerLinkActive="active-link">
+      Inventory
+    </button>
+  </nav>
+  
+  <span class="spacer"></span>
+  
+  <div class="tenant-selector">
+    <app-tenant-selector></app-tenant-selector>
+  </div>
+  
+  <div class="user-info">
+    <button mat-button (click)="logout()">
+      <mat-icon class="logout-icon">logout</mat-icon>
+      Logout
+    </button>
+  </div>
+</mat-toolbar>

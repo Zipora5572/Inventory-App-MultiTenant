@@ -1,0 +1,42 @@
+.header-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .logo-img {
+    height: 36px;
+  }
+
+  .app-name {
+    font-weight: 600;
+    font-size: 1.2rem;
+    
+  }
+}
+
+.tenant-info {
+  margin-left: 24px;
+  font-weight: 500;
+  color: #eee;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgb(8, 7, 7);
+
+  .user-name {
+    font-weight: 500;
+  }
+}

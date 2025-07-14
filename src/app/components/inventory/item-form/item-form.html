@@ -1,0 +1,26 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="add-form" autocomplete="off">
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Item Name</mat-label>
+    <input matInput formControlName="name" placeholder="Enter item name" />
+
+    @if ((form.controls.name.touched || submitted) && form.controls.name.hasError('required')) {
+      <mat-error>Name is required</mat-error>
+    }
+    @if ((form.controls.name.touched || submitted) && form.controls.name.hasError('maxlength')) {
+      <mat-error>Name must be at most 50 characters</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Category</mat-label>
+    <input matInput formControlName="category" placeholder="Enter category" />
+
+    @if ((form.controls.category.touched || submitted) && form.controls.category.hasError('required')) {
+      <mat-error>Category is required</mat-error>
+    }
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting">
+    {{ isEditMode ? 'Update Item' : 'Add Item' }}
+  </button>
+</form>

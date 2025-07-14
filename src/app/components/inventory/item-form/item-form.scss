@@ -1,0 +1,16 @@
+ .add-form {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        align-items: flex-end;
+        flex-wrap: wrap;
+      }
+
+      .full-width {
+        flex: 1 1 300px;
+        min-width: 250px;
+      }
+
+      button[type='submit'] {
+        height: 56px;
+      }
