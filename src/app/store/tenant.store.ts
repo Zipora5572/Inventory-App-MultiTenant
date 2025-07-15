@@ -5,10 +5,13 @@ import {
   patchState,
   withComputed,
 } from '@ngrx/signals';
-import { inject, computed, effect } from '@angular/core';
+import { inject, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environments';
 import { Tenant as TenantModel } from '../models/tenant';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { switchMap } from 'rxjs';
+import { tapResponse } from '@ngrx/operators';
 
 const TENANT_ID_KEY = 'tenant-id';
 
@@ -40,7 +43,6 @@ export const TenantStore = signalStore(
   withMethods((store) => {
     const http = inject(HttpClient);
 
-
     const setTenant = (tenantName: string): void => {
       localStorage.setItem(TENANT_ID_KEY, tenantName);
       patchState(store, { tenantName });
@@ -51,23 +53,24 @@ export const TenantStore = signalStore(
       patchState(store, { tenantName: null });
     };
 
+    const loadAllTenants = rxMethod<void>(
+      switchMap(() => {
+        if (store.allTenants().length > 0) return [];
 
-    
+        patchState(store, { isLoadingTenants: true });
 
-    const loadAllTenants = (): void => {
-      if (store.allTenants().length > 0) return;
-
-      patchState(store, { isLoadingTenants: true });
-
-      http.get<TenantModel[]>(`${environment.apiUrl}/tenants`).subscribe({
-        next: tenants => patchState(store, { allTenants: tenants }),
-        error: err => {
-          console.error('[TenantStore] Failed loading all tenants', err);
-          patchState(store, { allTenants: [] });
-        },
-        complete: () => patchState(store, { isLoadingTenants: false }),
-      });
-    };
+        return http.get<TenantModel[]>(`${environment.apiUrl}/tenants`).pipe(
+          tapResponse({
+            next: tenants => patchState(store, { allTenants: tenants }),
+            error: err => {
+              console.error('[TenantStore] Failed loading all tenants', err);
+              patchState(store, { allTenants: [] });
+            },
+            finalize: () => patchState(store, { isLoadingTenants: false }),
+          })
+        );
+      })
+    );
 
     return {
       setTenant,

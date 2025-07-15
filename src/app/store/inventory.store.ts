@@ -133,6 +133,7 @@ export const InventoryStore = signalStore(
       )
     );
 
+    
     const deleteItem = rxMethod<number>(
       pipe(
         switchMap(id =>
