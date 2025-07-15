@@ -6,7 +6,9 @@ import {
   withComputed,
 } from '@ngrx/signals';
 import { inject, computed, effect } from '@angular/core';
-import { finalize, tap } from 'rxjs/operators';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { tapResponse } from '@ngrx/operators';
+import { pipe, switchMap, tap } from 'rxjs';
 import { Inventory } from '../services/inventory';
 import { Item } from '../models/item';
 import { TenantStore } from './tenant.store';
@@ -40,110 +42,117 @@ export const InventoryStore = signalStore(
     const tenantStore = inject(TenantStore);
     const toast = inject(Toast);
 
-    effect(() => {
-      const tenant = tenantStore.tenantName();
-      tenant ? loadItems() : clearItems();
-    });
-
-    const loadItems = (): void => {
-      patchState(store, { isLoading: true });
-
-      inventoryService.getAll().pipe(
-        tap(items => patchState(store, { items })),
-        finalize(() => patchState(store, { isLoading: false }))
-      ).subscribe({
-        error: err => {
-          console.error('[InventoryStore] Load failed:', err);
-          patchState(store, { items: [] });
-          const tenantId = tenantStore.tenantName();
-  if (tenantId) {
-    toast.show('Failed to load items', 'error');
-  }
-        }
-      });
+    const handleError = (context: string, err: unknown): void => {
+      const message = err instanceof Error ? err.message : JSON.stringify(err);
+      console.error(`[InventoryStore] ${context} failed:`, message);
+      toast.show(`Failed to ${context.toLowerCase()}`, 'error');
     };
+
+    const loadItems = rxMethod<void>(
+      pipe(
+        tap(() => patchState(store, { isLoading: true })),
+        switchMap(() => inventoryService.getAll()),
+        tapResponse({
+          next: items => {
+            patchState(store, { items, isLoading: false });
+          },
+          error: err => {
+            patchState(store, { items: [], isLoading: false });
+            handleError('Load', err);
+          }
+        })
+      )
+    );
+
 
     const clearItems = (): void => {
       patchState(store, { items: [] });
     };
 
-    const addItem = (item: Partial<Item>): void => {
-      inventoryService.create(item).subscribe({
-        next: newItem => {
-          patchState(store, state => ({
-            items: [...state.items, newItem],
-          }));
-          toast.show('Item added successfully', 'success');
-        },
-        error: err => {
-          console.error('[InventoryStore] Add failed:', err);
-          toast.show('Failed to add item', 'error');
-        },
-      });
-    };
+    const addItem = rxMethod<Partial<Item>>(
+      pipe(
+        switchMap(item => inventoryService.create(item)),
+        tapResponse({
+          next: newItem => {
+            toast.show('Item added successfully', 'success');
+            loadItems();
+          },
+          error: err => handleError('Add', err),
+        })
+      )
+    );
 
-    const updateItem = (id: number, changes: Partial<Item>): void => {
-      inventoryService.update(id, changes).subscribe({
-        next: updatedItem => {
-          patchState(store, state => ({
-            items: state.items.map(item =>
-              item.id === updatedItem.id ? updatedItem : item
-            ),
-          }));
-          toast.show('Item updated successfully', 'success');
-        },
-        error: err => {
-          console.error('[InventoryStore] Update failed:', err);
-          toast.show('Failed to update item', 'error');
-        },
-      });
-    };
+    const updateItem = rxMethod<{ id: number; changes: Partial<Item> }>(
+      pipe(
+        switchMap(({ id, changes }) =>
+          inventoryService.update(id, changes)
+        ),
+        tapResponse({
+          next: () => {
+            toast.show('Item updated successfully', 'success');
+            loadItems();
+          },
+          error: err => handleError('Update', err),
+        })
+      )
+    );
 
-  const checkoutItem = (id: number): void => {
-  inventoryService.checkout(id).subscribe({
-    next: () => {
-      loadItems();
-      toast.show('Item checked out', 'success');
-    },
-    error: err => {
-      console.error('[InventoryStore] Checkout failed:', err);
-      if (err.status === 403) {
-        toast.show('Access denied: you are not authorized to check out this item.', 'error');
-      } else {
-        toast.show('Failed to check out item', 'error');
-      }
-    },
-  });
-};
+    const checkoutItem = rxMethod<number>(
+      pipe(
+        switchMap(id => inventoryService.checkout(id)),
+        tapResponse({
+          next: () => {
+            loadItems();
+            toast.show('Item checked out', 'success');
+          },
+          error: (err: unknown) => {
+            const message = err instanceof Error ? err.message : '';
+            const isForbidden = typeof err === 'object' && err !== null && 'status' in err && (err as any).status === 403;
+            console.error('[InventoryStore] Checkout failed:', message);
+            toast.show(
+              isForbidden
+                ? 'Access denied: not authorized.'
+                : 'Failed to check out item',
+              'error'
+            );
+          },
+        })
+      )
+    );
 
+    const checkinItem = rxMethod<number>(
+      pipe(
+        switchMap(id => inventoryService.checkin(id)),
+        tapResponse({
+          next: () => {
+            loadItems();
+            toast.show('Item checked in', 'success');
+          },
+          error: err => handleError('Checkin', err),
+        })
+      )
+    );
 
-    const checkinItem = (id: number): void => {
-      inventoryService.checkin(id).subscribe({
-        next: () => {
-          loadItems();
-          toast.show('Item checked in', 'success');
-        },
-        error: err => {
-          console.error('[InventoryStore] Checkin failed:', err);
-          toast.show('Failed to check in item', 'error');
-        },
-      });
-    };
+    const deleteItem = rxMethod<number>(
+      pipe(
+        switchMap(id =>
+          inventoryService.softDelete(id).pipe(
+            tapResponse({
+              next: () => {
+                toast.show('Item deleted successfully', 'success');
+                loadItems();
+              },
+              error: err => handleError('Delete', err),
+            })
+          )
+        )
+      )
+    );
 
-    const deleteItem = (id: number): void => {
-      inventoryService.softDelete(id).subscribe({
-        next: () => {
-          patchState(store, state => ({
-            items: state.items.filter(item => item.id !== id),
-          }));
-          toast.show('Item deleted successfully', 'success');
-        },
-        error: err => {
-          console.error('[InventoryStore] Delete failed:', err);
-          toast.show('Failed to delete item', 'error');
-        },
-      });
-    };
+    effect(() => {
+      const tenant = tenantStore.tenantName();
+      tenant ? loadItems() : clearItems();
+    });
 
     return {
       loadItems,

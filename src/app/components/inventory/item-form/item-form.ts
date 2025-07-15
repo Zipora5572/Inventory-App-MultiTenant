@@ -66,12 +66,12 @@ export class ItemForm implements OnInit {
       name: name!.trim(),
       category: category!.trim()
     };
+if (this.isEditMode) {
+  this.#store.updateItem({ id: this.#itemToEdit!.id, changes: payload });
+} else {
+  this.#store.addItem(payload);
+}
 
-    if (this.isEditMode) {
-      this.#store.updateItem(this.#itemToEdit!.id, payload);
-    } else {
-      this.#store.addItem(payload);
-    }
 
     this.isSubmitting = false;
     this.#dialogRef.close();
