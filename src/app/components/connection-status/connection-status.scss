@@ -1,0 +1,152 @@
+app-connection-status {
+  margin-right: 16px;
+  
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 20px;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    position: relative;
+    min-height: 36px;
+    overflow: hidden;
+
+    &:hover {
+      background: #f8f9fa;
+      border-color: #c4c7c5;
+      box-shadow: 0 1px 3px rgba(60, 64, 67, 0.12);
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    &:hover::before {
+      left: 100%;
+    }
+
+    // Material Icon Styling
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      
+      &[color="primary"] {
+        color: #1a73e8;
+      }
+      
+      &[color="accent"] {
+        color: #34a853;
+      }
+      
+      &[color="warn"] {
+        color: #ea4335;
+      }
+    }
+
+    // Status Dot
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      position: relative;
+      
+      &.connected {
+        background: #00ff88;
+        box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+        animation: pulse-success 2s infinite;
+      }
+
+      &.connecting {
+        background: #ffaa00;
+        animation: pulse-warning 1.5s infinite;
+      }
+
+      &.disconnected {
+        background: #ff4444;
+        animation: pulse-error 1s infinite;
+      }
+
+      &.realtime {
+        background: #00aaff;
+        animation: pulse-info 1s infinite;
+      }
+    }
+
+    // Status Text
+    .status-text {
+      font-size: 13px;
+      font-weight: 500;
+      color: #3c4043;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+    }
+  }
+}
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes connecting-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-success {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes pulse-warning {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes pulse-error {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes pulse-info {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}

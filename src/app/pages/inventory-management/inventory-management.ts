@@ -1,12 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { InventoryList } from '../../components/inventory/inventory-list/inventory-list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ItemForm } from '../../components/inventory/item-form/item-form';
 import { InventoryStore } from '../../store/inventory.store';
+import { InventoryList } from '../../components/inventory/inventory-list/inventory-list';
+import { InventoryHub } from '../../services/inventory-hub';
 
 @Component({
   selector: 'app-inventory-management',

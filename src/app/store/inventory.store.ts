@@ -53,9 +53,7 @@ export const InventoryStore = signalStore(
         tap(() => patchState(store, { isLoading: true })),
         switchMap(() => inventoryService.getAll()),
         tapResponse({
-          next: items => {
-            patchState(store, { items, isLoading: false });
-          },
+          next: items => patchState(store, { items, isLoading: false }),
           error: err => {
             patchState(store, { items: [], isLoading: false });
             handleError('Load', err);
@@ -63,7 +61,6 @@ export const InventoryStore = signalStore(
         })
       )
     );
-
 
     const clearItems = (): void => {
       patchState(store, { items: [] });
@@ -75,7 +72,7 @@ export const InventoryStore = signalStore(
         tapResponse({
           next: newItem => {
             toast.show('Item added successfully', 'success');
-            loadItems();
+            addItemDirectly(newItem);
           },
           error: err => handleError('Add', err),
         })
@@ -84,13 +81,11 @@ export const InventoryStore = signalStore(
 
     const updateItem = rxMethod<{ id: number; changes: Partial<Item> }>(
       pipe(
-        switchMap(({ id, changes }) =>
-          inventoryService.update(id, changes)
-        ),
+        switchMap(({ id, changes }) => inventoryService.update(id, changes)),
         tapResponse({
-          next: () => {
+          next: updatedItem => {
             toast.show('Item updated successfully', 'success');
-            loadItems();
+            updateItemDirectly(updatedItem.id, updatedItem);
           },
           error: err => handleError('Update', err),
         })
@@ -101,18 +96,16 @@ export const InventoryStore = signalStore(
       pipe(
         switchMap(id => inventoryService.checkout(id)),
         tapResponse({
-          next: () => {
-            loadItems();
+          next: updatedItem => {
+            updateItemDirectly(updatedItem.id, updatedItem);
             toast.show('Item checked out', 'success');
           },
-          error: (err: unknown) => {
+          error: err => {
             const message = err instanceof Error ? err.message : '';
             const isForbidden = typeof err === 'object' && err !== null && 'status' in err && (err as any).status === 403;
             console.error('[InventoryStore] Checkout failed:', message);
             toast.show(
-              isForbidden
-                ? 'Access denied: not authorized.'
-                : 'Failed to check out item',
+              isForbidden ? 'Access denied: not authorized.' : 'Failed to check out item',
               'error'
             );
           },
@@ -124,8 +117,8 @@ export const InventoryStore = signalStore(
       pipe(
         switchMap(id => inventoryService.checkin(id)),
         tapResponse({
-          next: () => {
-            loadItems();
+          next: updatedItem => {
+            updateItemDirectly(updatedItem.id, updatedItem);
             toast.show('Item checked in', 'success');
           },
           error: err => handleError('Checkin', err),
@@ -133,15 +126,14 @@ export const InventoryStore = signalStore(
       )
     );
 
-    
     const deleteItem = rxMethod<number>(
       pipe(
         switchMap(id =>
           inventoryService.softDelete(id).pipe(
             tapResponse({
               next: () => {
+                deleteItemDirectly(id);
                 toast.show('Item deleted successfully', 'success');
-                loadItems();
               },
               error: err => handleError('Delete', err),
             })
@@ -149,6 +141,25 @@ export const InventoryStore = signalStore(
         )
       )
     );
+
+    const addItemDirectly = (item: Item): void => {
+      const current = store.items();
+      if (!current.find(i => i.id === item.id)) {
+        patchState(store, { items: [...current, item] });
+      }
+    };
+
+    const updateItemDirectly = (id: number, changes: Partial<Item>): void => {
+      const updated = store.items().map(item =>
+        item.id === id ? { ...item, ...changes } : item
+      );
+      patchState(store, { items: updated });
+    };
+
+    const deleteItemDirectly = (id: number): void => {
+      const filtered = store.items().filter(item => item.id !== id);
+      patchState(store, { items: filtered });
+    };
 
     effect(() => {
       const tenant = tenantStore.tenantName();
@@ -163,6 +174,10 @@ export const InventoryStore = signalStore(
       checkoutItem,
       checkinItem,
       deleteItem,
+
+      addItemDirectly,
+      updateItemDirectly,
+      deleteItemDirectly,
     };
   })
 );

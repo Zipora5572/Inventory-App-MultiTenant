@@ -10,18 +10,6 @@ export const tenantInterceptor: HttpInterceptorFn = (req, next) => {
     }
   });
 
-  // return toObservable(tenantStore.tenantName).pipe(
-  //   take(1), (snapshot)
-  //   map((tenantId) => {
-  //     const safeTenantId = tenantId || '';
-  //     console.log(`Tenant ID from Store: ${safeTenantId}`);
-  //     return req.clone({
-  //       setHeaders: {
-  //         'X-Tenant-ID': safeTenantId
-  //       }
-  //     });
-  //   }),
-  //   switchMap((modifiedReq) => next(modifiedReq))
-  // );
+
   return next(modifiedReq);
 };

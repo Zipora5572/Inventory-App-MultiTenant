@@ -1,0 +1,81 @@
+.tenant-selector {
+  margin-right: 16px;
+  
+  mat-select {
+    min-width: 200px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #3c4043;
+    font-family: 'Google Sans', 'Roboto', sans-serif;
+    transition: all 0.2s ease-in-out;
+    height: 40px;
+    line-height: 40px;
+
+    &:hover {
+      background: #f8f9fa;
+      border-color: #c4c7c5;
+      box-shadow: 0 1px 3px rgba(60, 64, 67, 0.12);
+    }
+
+    &.mat-focused {
+      background: #ffffff;
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.12);
+    }
+
+    .mat-select-value {
+      color: #3c4043;
+      font-weight: 500;
+    }
+
+    .mat-select-arrow {
+      color: #5f6368;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    &.mat-select-open .mat-select-arrow {
+      transform: rotate(180deg);
+    }
+
+    .mat-select-placeholder {
+      color: #80868b;
+      font-weight: 400;
+    }
+  }
+
+  // Dropdown panel styling
+  ::ng-deep .mat-select-panel {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(60, 64, 67, 0.15);
+    border: 1px solid #e8eaed;
+    margin-top: 4px;
+
+    .mat-option {
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+      font-size: 14px;
+      color: #3c4043;
+      padding: 12px 16px;
+      min-height: 44px;
+      line-height: 20px;
+
+      &:hover {
+        background: #f8f9fa;
+      }
+
+      &.mat-selected {
+        background: #e8f0fe;
+        color: #1a73e8;
+        font-weight: 500;
+      }
+
+      &.mat-active {
+        background: #f1f3f4;
+      }
+    }
+  }
+}

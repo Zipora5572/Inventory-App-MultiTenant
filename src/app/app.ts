@@ -11,6 +11,5 @@ import { TenantStore } from './store/tenant.store';
   styleUrl: './app.scss'
 })
 export class App {
-    private readonly tenantStore = inject(TenantStore);
 
 }
