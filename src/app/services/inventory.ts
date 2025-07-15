@@ -24,13 +24,15 @@ export class Inventory {
   return this.#http.put<Item>(`${environment.apiUrl}/items/${id}`, item);
   }
 
-  checkout(id: number): Observable<void> {
-    return this.#http.post<void>(`${environment.apiUrl}/items/${id}/checkout`, {});
-  }
+ checkout(id: number): Observable<Item> {
+  return this.#http.post<Item>(`${environment.apiUrl}/items/${id}/checkout`, {});
+}
 
-  checkin(id: number): Observable<void> {
-    return this.#http.post<void>(`${environment.apiUrl}/items/${id}/checkin`, {});
-  }
+
+ checkin(id: number): Observable<Item> {
+  return this.#http.post<Item>(`${environment.apiUrl}/items/${id}/checkin`, {});
+}
+
 
   softDelete(id: number): Observable<void> {
     return this.#http.delete<void>(`${environment.apiUrl}/items/${id}`);

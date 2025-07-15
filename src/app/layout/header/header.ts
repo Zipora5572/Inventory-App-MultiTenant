@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { TenantStore } from '../../store/tenant.store';
 import { TenantSelector } from '../../components/tenant-selector/tenant-selector';
+import { ConnectionStatus } from '../../components/connection-status/connection-status';
 
 @Component({
   selector: 'app-header',
@@ -18,7 +19,8 @@ import { TenantSelector } from '../../components/tenant-selector/tenant-selector
     MatButtonModule,
     MatSelectModule,
     CommonModule,
-    TenantSelector
+    TenantSelector,
+    ConnectionStatus
   ],
   templateUrl: './header.html',
   styleUrl: './header.scss',
