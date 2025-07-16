@@ -1,15 +1,16 @@
-<mat-toolbar class="header-toolbar">
+<mat-toolbar class="header-toolbar" >
   <div class="logo">
     <span class="app-name">Multi-Tenant Inventory</span>
   </div>
-  
-  
+
   <span class="spacer"></span>
-  
+
+  <app-connection-status></app-connection-status>
+
   <div class="tenant-selector">
     <app-tenant-selector></app-tenant-selector>
   </div>
-  
+
   <div class="user-info">
     <button mat-button (click)="logout()">
       <mat-icon class="logout-icon">logout</mat-icon>
